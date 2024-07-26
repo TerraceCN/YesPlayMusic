@@ -94,5 +94,6 @@ export function ipcRenderer(vueInstance) {
 
   ipcRenderer.on('sendWs', () => {
     player._updateWebsocketState(player.currentTrack);
+    player.sendSelfToIpcMain();
   });
 }
