@@ -251,9 +251,7 @@ export default class {
       if (this._howler === null) return;
       this._progress = this._howler.seek();
       localStorage.setItem('playerCurrentTrackTime', this._progress);
-      if (isCreateMpris) {
-        ipcRenderer?.send('playerCurrentTrackTime', this._progress);
-      }
+      ipcRenderer?.send('playerCurrentTrackTime', this._progress);
     }, 1000);
   }
   _getNextTrack() {
@@ -500,6 +498,7 @@ export default class {
       const track = data.songs[0];
       this._currentTrack = track;
       this._updateMediaSessionMetaData(track);
+      this._updateWebsocketState(track);
       return this._replaceCurrentTrackAudio(
         track,
         autoplay,
@@ -627,16 +626,23 @@ export default class {
     if (isCreateMpris) {
       this._updateMprisState(track, metadata);
     }
-
-    this._updateWebsocketState(track, metadata);
   }
-  async _updateWebsocketState(track, metadata) {
+  async _updateWebsocketState(track) {
+    let artists = track.ar.map(a => a.name);
+    const metadata = {
+      title: track.name,
+      artist: artists.join(','),
+      album: track.al.name,
+      artwork: track.al.picUrl,
+      length: this.currentTrackDuration,
+    };
+
     let lyricContent = await getLyric(track.id);
     let lyrics = null;
     if (lyricContent.lrc && lyricContent.lrc.lyric) {
       lyrics = lyricContent.lrc.lyric;
     }
-    ipcRenderer?.send('updateWebsocket', JSON.stringify({ metadata, lyrics }));
+    ipcRenderer?.send('updateWs', { metadata, lyrics });
   }
   // OSDLyrics 会检测 Mpris 状态并寻找对应歌词文件，所以要在更新 Mpris 状态之前保证歌词下载完成
   async _updateMprisState(track, metadata) {

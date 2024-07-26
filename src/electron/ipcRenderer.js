@@ -91,4 +91,8 @@ export function ipcRenderer(vueInstance) {
   ipcRenderer.on('setPosition', (event, position) => {
     player._howler.seek(position);
   });
+
+  ipcRenderer.on('sendWs', () => {
+    player._updateWebsocketState(player.currentTrack);
+  });
 }

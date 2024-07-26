@@ -6,20 +6,56 @@ import expressWs from 'express-ws';
  * 创建 Websocket 接口
  * @param {Express} expressApp
  */
-export function createWebsocket(expressApp) {
+export function createWebsocket(that, expressApp) {
   expressWs(expressApp);
-
+  
   expressApp.ws('/ws', function (ws, req) {
-    console.log(`Websocket connected, from: ${req.ip}`);
+    
     ws.on('message', function (msg) {
-      console.log(msg);
+      if (that.window === undefined) {
+        console.warning('Window not created, please connect later');
+        ws.close(1011);
+        return;
+      }
+
+      try {
+        const data = JSON.parse(msg);
+        switch (data.action) {
+          case 'play':
+            renderer.send('play');
+            break;
+          case 'previous':
+            renderer.send('previous');
+            break;
+          case 'next':
+            renderer.send('next');
+            break;
+          case 'like':
+            renderer.send('like');
+            break;
+          case 'update':
+            renderer.send('sendWs');
+            break;
+          default:
+            console.log('Unknown action:', data.action)
+            break;
+        } 
+      } catch (error) {
+        console.log(error);
+      }
     });
 
     ipcMain.on('player', (e, data) => {
       ws.send(JSON.stringify(data));
     });
-    ipcMain.on('updateWebsocket', (e, data) => {
-      ws.send(data);
+
+    ipcMain.on('updateWs', (e, data) => {
+      ws.send(JSON.stringify(data));
     });
+
+    ipcMain.on('playerCurrentTrackTime', (e, data) => {
+      ws.send(JSON.stringify({playerCurrentTrackTime: data}));
+    })
+
   });
 }

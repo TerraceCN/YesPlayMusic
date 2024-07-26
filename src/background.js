@@ -154,7 +154,7 @@ class Background {
     log('creating express app');
 
     const expressApp = express();
-    createWebsocket(expressApp);
+    createWebsocket(this, expressApp);
     expressApp.use('/', express.static(__dirname + '/'));
     expressApp.use('/api', expressProxy('http://127.0.0.1:10754'));
     expressApp.use('/player', (req, res) => {
