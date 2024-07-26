@@ -627,6 +627,16 @@ export default class {
     if (isCreateMpris) {
       this._updateMprisState(track, metadata);
     }
+
+    this._updateWebsocketState(track, metadata);
+  }
+  async _updateWebsocketState(track, metadata) {
+    let lyricContent = await getLyric(track.id);
+    let lyrics = null;
+    if (lyricContent.lrc && lyricContent.lrc.lyric) {
+      lyrics = lyricContent.lrc.lyric;
+    }
+    ipcRenderer?.send('updateWebsocket', JSON.stringify({ metadata, lyrics }));
   }
   // OSDLyrics 会检测 Mpris 状态并寻找对应歌词文件，所以要在更新 Mpris 状态之前保证歌词下载完成
   async _updateMprisState(track, metadata) {
