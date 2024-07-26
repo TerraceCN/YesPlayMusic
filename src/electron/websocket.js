@@ -8,9 +8,8 @@ import expressWs from 'express-ws';
  */
 export function createWebsocket(that, expressApp) {
   expressWs(expressApp);
-  
+
   expressApp.ws('/ws', function (ws, req) {
-    
     ws.on('message', function (msg) {
       if (that.window === undefined) {
         console.warning('Window not created, please connect later');
@@ -37,9 +36,9 @@ export function createWebsocket(that, expressApp) {
             renderer.send('sendWs');
             break;
           default:
-            console.log('Unknown action:', data.action)
+            console.log('Unknown action:', data.action);
             break;
-        } 
+        }
       } catch (error) {
         console.log(error);
       }
@@ -54,8 +53,7 @@ export function createWebsocket(that, expressApp) {
     });
 
     ipcMain.on('playerCurrentTrackTime', (e, data) => {
-      ws.send(JSON.stringify({playerCurrentTrackTime: data}));
-    })
-
+      ws.send(JSON.stringify({ playerCurrentTrackTime: data }));
+    });
   });
 }
