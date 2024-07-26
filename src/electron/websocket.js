@@ -23,6 +23,7 @@ export function createWebsocket(that, expressApp) {
         ws.close(1011);
         return;
       }
+      const renderer = that.window.webContents;
 
       try {
         const data = JSON.parse(msg);
@@ -43,7 +44,7 @@ export function createWebsocket(that, expressApp) {
             renderer.send('sendWs');
             break;
           default:
-            console.log('Unknown action:', data.action);
+            console.error('Unknown action:', data.action);
             break;
         }
       } catch (error) {
