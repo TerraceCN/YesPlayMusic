@@ -726,6 +726,45 @@
         </div>
       </div>
 
+      <div v-if="isElectron">
+        <h3>Websocket</h3>
+        <div class="item">
+          <div class="left">
+            <div class="title">启用 Websocket</div>
+          </div>
+          <div class="right">
+            <div class="toggle">
+              <input
+                id="enable-websocket"
+                v-model="enableWebsocket"
+                type="checkbox"
+                name="enable-websocket"
+              />
+              <label for="enable-websocket"></label>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="left">
+            <div class="title">允许局域网连接</div>
+            <div class="description">
+              此操作会同时影响程序其他API接口, 请谨慎操作. 重启程序后生效.
+            </div>
+          </div>
+          <div class="right">
+            <div class="toggle">
+              <input
+                id="allow-lan"
+                v-model="allowLan"
+                type="checkbox"
+                name="allow-lan"
+              />
+              <label for="allow-lan"></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="footer">
         <p class="author"
           >MADE BY
@@ -1226,6 +1265,32 @@ export default {
         this.$store.commit('updateSettings', {
           key: 'linuxEnableCustomTitlebar',
           value,
+        });
+      },
+    },
+    enableWebsocket: {
+      get() {
+        return this.settings.websocket.enable || false;
+      },
+      set(value) {
+        let config = this.settings.websocket || {};
+        config.enable = value;
+        this.$store.commit('updateSettings', {
+          key: 'websocket',
+          value: config,
+        });
+      },
+    },
+    allowLan: {
+      get() {
+        return this.settings.websocket.allowLan || false;
+      },
+      set(value) {
+        let config = this.settings.websocket || {};
+        config.allowLan = value;
+        this.$store.commit('updateSettings', {
+          key: 'websocket',
+          value: config,
         });
       },
     },

@@ -37,6 +37,10 @@ let localStorage = {
       port: null,
     },
     shortcuts: shortcuts,
+    websocket: {
+      enable: false,
+      allowLan: false,
+    },
   },
   data: {
     user: {},

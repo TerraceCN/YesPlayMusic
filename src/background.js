@@ -169,7 +169,11 @@ class Background {
           });
         });
     });
-    this.expressApp = expressApp.listen(27232, '127.0.0.1');
+    const host = this.store.get('settings.websocket.allowLan')
+      ? '0.0.0.0'
+      : '127.0.0.1';
+    console.log(`express listen on ${host}:27232`);
+    this.expressApp = expressApp.listen(27232, host);
   }
 
   createWindow() {

@@ -10,9 +10,16 @@ export function createWebsocket(that, expressApp) {
   expressWs(expressApp);
 
   expressApp.ws('/ws', function (ws, req) {
+    if (!that.store.get('settings.websocket.enable')) {
+      ws.close(1008);
+      console.error('Websocket not enabled');
+    } else {
+      console.log('Websocket connected, from:', req.ip);
+    }
+
     ws.on('message', function (msg) {
       if (that.window === undefined) {
-        console.warning('Window not created, please connect later');
+        console.error('Window not created, please connect later');
         ws.close(1011);
         return;
       }
